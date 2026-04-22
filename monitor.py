@@ -15,7 +15,7 @@ def send_telegram_message(message):
         "text": message
     }
 
-    requests.post(telegram_api_url, data=data)
+    requests.post(telegram_api_url, data=data, timeout=5)
 
 last_status = None
 
@@ -24,13 +24,23 @@ while True:
         response = requests.get(url,timeout=5)
 
         if response.status_code == 200:
-            print(f"{datetime.datetime.now()} | {url} is UP")
+            current_status = "UP"
         else:
-            print(f"🚨 {url} is DOWN. Status Code: {response.status_code}")
-            send_telegram_message(f"🚨 {url} is DOWN. Status Code: {response.status_code}")
-
+            current_status = "DOWN"
     except Exception as e:
-        print("CRITICAL ERROR", e)
-        send_telegram_message(f"🔥 CRITICAL ERROR: {e}")
+        print("ERROR:", e)
+        current_status = "DOWN"
+
+    if current_status != last_status:
+
+        if current_status == "DOWN":
+            send_telegram_message(f"🚨 {url} is DOWN")
+        else:
+            send_telegram_message(f"✅ {url} is BACK UP")
+
+        print(f"{datetime.datetime.now()} | STATUS CHANGE: {current_status}")
+        last_status = current_status
+    else:
+        print(f"{datetime.datetime.now()} | {url} is {current_status}")
 
     time.sleep(10)
