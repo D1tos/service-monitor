@@ -1,9 +1,14 @@
+from dotenv import load_dotenv
+
+import os
 import requests
 import datetime
 import time
 
-TOKEN = "8767610691:AAEMhGRyTnnJjNlH5XR9okAthuGI7oWiZko"
-CHAT_ID = "350857578"
+load_dotenv()
+
+TOKEN = os."TOKEN"
+CHAT_ID = os."CHAT_ID"
 
 url = "https://google.com"
 
