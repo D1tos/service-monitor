@@ -17,6 +17,8 @@ def send_telegram_message(message):
 
     requests.post(telegram_api_url, data=data)
 
+last_status = None
+
 while True:
     try:
         response = requests.get(url,timeout=5)
