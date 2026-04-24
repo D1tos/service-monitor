@@ -2,7 +2,9 @@
 
 ## Description
 Simple service monitoring tool that checks website availability and sends alerts to Telegram when status changes.
+
 Designed to prevent alert spam by tracking service state.
+
 Even if Telegram API is unavailable, the monitor continues to work and logs status changes to console.
 
 ## Use Case
