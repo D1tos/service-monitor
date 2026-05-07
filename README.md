@@ -1,7 +1,7 @@
 # Service Monitor with Telegram Alerts
 
 ## Description
-Simple service monitoring tool that checks website availability and sends alerts to Telegram when status changes.
+CLI-based service monitoring tool for tracking website and API availability with Telegram alerts and fallback console logging.
 
 Designed to prevent alert spam by tracking service state.
 
@@ -22,12 +22,16 @@ and receive instant alerts in case of downtime.
 - Telegram notifications
 - Error handling
 - Works without Telegram API (fallback mode)
+- Multiple URL monitoring
+- Custom check interval
+- CLI support with Click
 
 ## Tech Stack
 - Python
 - requests
 - python-dotenv
 - Telegram Bot API
+- click
 
 ## How to run
 
@@ -42,10 +46,33 @@ pip install -r requirements.txt
 
 TOKEN=your_token
 CHAT_ID=your_chat_id
-URL=https://example.com
 
 4. Run:
-python monitor.py
+python monitor.py --url https://example.com
+
+## CLI Examples
+
+Monitor one website:
+
+python monitor.py --url https://google.com
+
+Monitor multiple websites:
+
+python monitor.py \
+  --url https://google.com \
+  --url https://github.com
+
+Custom interval:
+
+python monitor.py \
+  --url https://google.com \
+  --interval 5
+
+Disable Telegram alerts:
+
+python monitor.py \
+  --url https://google.com \
+  --no-telegram
 
 ## Example
 

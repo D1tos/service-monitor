@@ -4,21 +4,19 @@ import os
 import requests
 import datetime
 import time
+import click
 
 load_dotenv()
 
 TOKEN = os.getenv("TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-URL = os.getenv("URL")
 
 telegram_enabled = bool(TOKEN and CHAT_ID)
 
-if not TOKEN or not CHAT_ID or not URL:
-    raise ValueError("TOKEN, CHAT_ID or URL not set")
 
 def send_telegram_message(message):
     if not telegram_enabled:
-        return 
+        return
     telegram_api_url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
     data = {
@@ -35,31 +33,43 @@ def send_telegram_message(message):
     except Exception as e:
         print("Telegram ERROR:", e)
 
-last_status = None
+@click.command()
+@click.option('--url', multiple=True, required=True, help='URL to monitor')
+@click.option('--interval', default=10, help='Check interval')
+@click.option('--no-telegram', is_flag=True, help='Disable telegram alerts')
 
+def main(url, interval, no_telegram):
+    last_status = {}
 
-while True:
-    try:
-        response = requests.get(URL,timeout=5)
+    while True:
+        for current_url in url:
+            try:
+                response = requests.get(current_url, timeout=5)
 
-        if response.status_code == 200:
-            current_status = "UP"
-        else:
-            current_status = "DOWN"
-    except Exception as e:
-        print("ERROR:", e)
-        current_status = "DOWN"
+                if response.status_code == 200:
+                    current_status = "UP"
+                else:
+                    current_status = "DOWN"
+            except Exception as e:
+                print("ERROR:", e)
+                current_status = "DOWN"
 
-    if current_status != last_status:
+            if current_url not in last_status or last_status[current_url] != current_status:
 
-        if current_status == "DOWN":
-            send_telegram_message(f"🚨 {URL} is DOWN")
-        else:
-            send_telegram_message(f"✅ {URL} is BACK UP")
+                if current_status == "DOWN":
+                    message=f"🚨 {current_url} is DOWN"
+                else:
+                    message=f"✅ {current_url} is BACK UP"
 
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | STATUS CHANGE: {current_status}")
-        last_status = current_status
-    else:
-        print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | STATUS: {current_status}")
+                if not no_telegram:
+                    send_telegram_message(message)
 
-    time.sleep(10)
+                print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | STATUS CHANGE: {current_url} -> {current_status}")
+                last_status[current_url] = current_status
+            else:
+                print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | STATUS: {current_url} -> {current_status}")
+
+        time.sleep(interval)
+
+if __name__ == "__main__":
+    main()
