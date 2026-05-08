@@ -7,88 +7,132 @@ Designed to prevent alert spam by tracking service state.
 
 Even if Telegram API is unavailable, the monitor continues to work and logs status changes to console.
 
-## Use Case
+## Features
+
+- HTTP status monitoring
+- Multiple URL monitoring
+- Telegram notifications
+- State-based alerts (no spam)
+- File logging
+- Console logging
+- Error handling
+- Automatic logs directory creation
+- Custom check interval
+- Configurable request timeout
+- CLI support with Click
+- Works without Telegram API (fallback mode)
+
+##Use Cases
 
 This tool can be used to monitor:
+
 - websites
 - APIs
 - internal services
+- development environments
+- self-hosted services
 
 and receive instant alerts in case of downtime.
 
-## Features
-- HTTP status monitoring
-- State-based alerts (no spam)
-- Telegram notifications
-- Error handling
-- Works without Telegram API (fallback mode)
-- Multiple URL monitoring
-- Custom check interval
-- CLI support with Click
-
 ## Tech Stack
+
 - Python
 - requests
 - python-dotenv
-- Telegram Bot API
 - click
+- logging
+- Telegram Bot API
 
-## How to run
+## Architecture
 
-1. Create virtual environment:
+- CLI interface via Click
+- HTTP monitoring with requests
+- Telegram notification system
+- Logging subsystem
+- Fallback behavior when Telegram is unavailable
+
+## Project Structure
+
+service-monitor/
+├── logs/
+│ └── monitor.log
+├── .env
+├── .gitignore
+├── monitor.py
+├── requirements.txt
+└── README.md
+
+## Installation
+
+### 1. Clone repository
+
+git clone https://github.com/D1tos/service-monitor.git
+cd service-monitor
+
+### 2. Create virtual environment
+
 python3 -m venv venv
 source venv/bin/activate
 
-2. Install dependencies:
+### 3. Install dependencies
+
 pip install -r requirements.txt
 
-3. Create .env file:
+### 4. Create .env file
 
-TOKEN=your_token
+TOKEN=your_telegram_token
 CHAT_ID=your_chat_id
 
-4. Run:
-python monitor.py --url https://example.com
+## Usage
 
-## CLI Examples
-
-Monitor one website:
+### Monitor one website
 
 python monitor.py --url https://google.com
 
-Monitor multiple websites:
+### Monitor multiple websites
 
 python monitor.py \
   --url https://google.com \
   --url https://github.com
 
-Custom interval:
+### Custom interval
 
 python monitor.py \
   --url https://google.com \
   --interval 5
 
-Disable Telegram alerts:
+### Custom timeout
+
+python monitor.py \
+  --url https://google.com \
+  --timeout 3
+
+### Disable Telegram alerts
 
 python monitor.py \
   --url https://google.com \
   --no-telegram
 
-## Example
+## Logging
 
-If service goes down:
-- 🚨 https://example.com is DOWN
+*Logs are automatically written to:*
 
-If service recovers:
-- ✅ https://example.com is BACK UP
+logs/monitor.log
 
-## Demo
+*Example log output:*
 
-Console output:
-2026-01-01 12:00:00 | STATUS: UP
+2025-08-05 12:00:00 | INFO | STATUS CHANGE: https://google.com -> DOWN
 
-On failure:
+## Alert Examples
+
+### Service is down
+
 🚨 https://example.com is DOWN
 
-On recovery:
+### Service recovered
+
 ✅ https://example.com is BACK UP
+
+## Author
+
+GitHub: https://github.com/D1tos

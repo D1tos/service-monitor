@@ -2,11 +2,22 @@ from dotenv import load_dotenv
 
 import os
 import requests
-import datetime
 import time
 import click
+import logging
 
 load_dotenv()
+
+os.makedirs("logs", exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | %(message)s',
+    handlers=[
+        logging.FileHandler('logs/monitor.log'),
+        logging.StreamHandler()
+    ]
+)
 
 TOKEN = os.getenv("TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
@@ -28,30 +39,31 @@ def send_telegram_message(message):
         response = requests.post(telegram_api_url, data=data, timeout=5)
 
         if response.status_code != 200:
-            print("Failed to send Telegram message")
+            logging.error("Failed to send Telegram message")
 
     except Exception as e:
-        print("Telegram ERROR:", e)
+        logging.error(f"Telegram ERROR: {e}")
 
 @click.command()
 @click.option('--url', multiple=True, required=True, help='URL to monitor')
 @click.option('--interval', default=10, help='Check interval')
 @click.option('--no-telegram', is_flag=True, help='Disable telegram alerts')
+@click.option('--timeout', default=5, help='Request timeout')
 
-def main(url, interval, no_telegram):
+def main(url, interval, no_telegram, timeout):
     last_status = {}
 
     while True:
         for current_url in url:
             try:
-                response = requests.get(current_url, timeout=5)
+                response = requests.get(current_url, timeout=timeout)
 
                 if response.status_code == 200:
                     current_status = "UP"
                 else:
                     current_status = "DOWN"
             except Exception as e:
-                print("ERROR:", e)
+                logging.error(f"Request ERROR: {e}")
                 current_status = "DOWN"
 
             if current_url not in last_status or last_status[current_url] != current_status:
@@ -64,10 +76,14 @@ def main(url, interval, no_telegram):
                 if not no_telegram:
                     send_telegram_message(message)
 
-                print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | STATUS CHANGE: {current_url} -> {current_status}")
+                logging.info(
+                    f"STATUS CHANGE: {current_url} -> {current_status}"
+                )
                 last_status[current_url] = current_status
             else:
-                print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | STATUS: {current_url} -> {current_status}")
+                logging.info(
+                    f"STATUS: {current_url} -> {current_status}"
+                )
 
         time.sleep(interval)
 
