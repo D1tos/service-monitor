@@ -21,6 +21,8 @@ Even if Telegram API is unavailable, the monitor continues to work and logs stat
 - Configurable request timeout
 - CLI support with Click
 - Works without Telegram API (fallback mode)
+- Retry system
+- Resilient monitoring behavior
 
 ##Use Cases
 
@@ -50,6 +52,7 @@ and receive instant alerts in case of downtime.
 - Telegram notification system
 - Logging subsystem
 - Fallback behavior when Telegram is unavailable
+- Retry-based request handling
 
 ## Project Structure
 

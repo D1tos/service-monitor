@@ -24,7 +24,6 @@ CHAT_ID = os.getenv("CHAT_ID")
 
 telegram_enabled = bool(TOKEN and CHAT_ID)
 
-
 def send_telegram_message(message):
     if not telegram_enabled:
         return
@@ -44,6 +43,28 @@ def send_telegram_message(message):
     except Exception as e:
         logging.error(f"Telegram ERROR: {e}")
 
+def check_website(url, timeout, retries=3):
+    for attempt in range(retries):
+        try:
+            response = requests.get(url, timeout=timeout)
+
+            if response.status_code == 200:
+                return "UP"
+
+            logging.warning(
+                f"{url} returned status code {response.status_code}"
+            )
+
+        except Exception as e:
+            logging.error(
+                f"Attempt {attempt + 1}/{retries} failed for {url}: {e}"
+            )
+
+            if attempt < retries - 1:
+                time.sleep(2)
+
+    return "DOWN"
+
 @click.command()
 @click.option('--url', multiple=True, required=True, help='URL to monitor')
 @click.option('--interval', default=10, help='Check interval')
@@ -55,16 +76,10 @@ def main(url, interval, no_telegram, timeout):
 
     while True:
         for current_url in url:
-            try:
-                response = requests.get(current_url, timeout=timeout)
-
-                if response.status_code == 200:
-                    current_status = "UP"
-                else:
-                    current_status = "DOWN"
-            except Exception as e:
-                logging.error(f"Request ERROR: {e}")
-                current_status = "DOWN"
+            current_status = check_website(
+                current_url,
+                timeout
+            )
 
             if current_url not in last_status or last_status[current_url] != current_status:
 
