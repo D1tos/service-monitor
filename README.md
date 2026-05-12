@@ -1,7 +1,7 @@
 # Service Monitor with Telegram Alerts
 
 ## Description
-CLI-based service monitoring tool for tracking website and API availability with Telegram alerts and fallback console logging.
+CLI-based service monitoring tool for tracking website and API availability with Telegram and Email alerts, retry logic, logging and fallback error handling.
 
 Designed to prevent alert spam by tracking service state.
 
@@ -10,21 +10,19 @@ Even if Telegram API is unavailable, the monitor continues to work and logs stat
 ## Features
 
 - HTTP status monitoring
-- Multiple URL monitoring
-- Telegram notifications
 - State-based alerts (no spam)
-- File logging
-- Console logging
-- Error handling
-- Automatic logs directory creation
-- Custom check interval
-- Configurable request timeout
-- CLI support with Click
-- Works without Telegram API (fallback mode)
+- Telegram notifications
+- Email notifications
+- Multi-channel alerts
 - Retry system
-- Resilient monitoring behavior
+- Error handling
+- Works without Telegram API (fallback mode)
+- Multiple URL monitoring
+- Custom check interval
+- CLI support with Click
+- Logging to file and console
 
-##Use Cases
+## Use Cases
 
 This tool can be used to monitor:
 
@@ -43,22 +41,24 @@ and receive instant alerts in case of downtime.
 - python-dotenv
 - click
 - logging
+- smtplib
 - Telegram Bot API
 
 ## Architecture
 
 - CLI interface via Click
+- Multi-URL monitoring
 - HTTP monitoring with requests
-- Telegram notification system
-- Logging subsystem
-- Fallback behavior when Telegram is unavailable
+- Telegram and Email notification system
+- File and console logging
+- Fallback behavior when notification services are unavailable
 - Retry-based request handling
 
 ## Project Structure
 
 service-monitor/
 ├── logs/
-│ └── monitor.log
+│   └── monitor.log
 ├── .env
 ├── .gitignore
 ├── monitor.py
@@ -81,10 +81,14 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
-### 4. Create .env file
+### 4. Create .env file 
 
 TOKEN=your_telegram_token
 CHAT_ID=your_chat_id
+
+EMAIL_SENDER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_RECEIVER=your_email@gmail.com
 
 ## Usage
 
@@ -110,7 +114,7 @@ python monitor.py \
   --url https://google.com \
   --timeout 3
 
-### Disable Telegram alerts
+### Disable Telegram alerts (optional for alerts)
 
 python monitor.py \
   --url https://google.com \
@@ -125,6 +129,15 @@ logs/monitor.log
 *Example log output:*
 
 2025-08-05 12:00:00 | INFO | STATUS CHANGE: https://google.com -> DOWN
+
+## Notifications
+
+The monitor supports:
+
+- Telegram alerts
+- Email alerts
+
+Alerts are only sent when service status changes.
 
 ## Alert Examples
 

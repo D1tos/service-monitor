@@ -5,6 +5,10 @@ import requests
 import time
 import click
 import logging
+import smtplib
+
+from email.message import EmailMessage
+
 
 load_dotenv()
 
@@ -21,8 +25,17 @@ logging.basicConfig(
 
 TOKEN = os.getenv("TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
+EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
 
 telegram_enabled = bool(TOKEN and CHAT_ID)
+
+email_enabled = bool(
+    EMAIL_SENDER and
+    EMAIL_PASSWORD and
+    EMAIL_RECEIVER
+)
 
 def send_telegram_message(message):
     if not telegram_enabled:
@@ -42,6 +55,34 @@ def send_telegram_message(message):
 
     except Exception as e:
         logging.error(f"Telegram ERROR: {e}")
+
+def send_email(subject, body):
+    if not email_enabled:
+        logging.warning("Email alerts disabled")
+        return
+
+    message = EmailMessage()
+
+    message["Subject"] = subject
+    message["From"] = EMAIL_SENDER
+    message["To"] = EMAIL_RECEIVER
+
+    message.set_content(body)
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+
+            server.login(
+                EMAIL_SENDER,
+                EMAIL_PASSWORD
+            )
+            server.send_message(message)
+
+        logging.info("Email alert sent")
+
+    except Exception as e:
+        logging.error(f"Email ERROR: {e}")
 
 def check_website(url, timeout, retries=3):
     for attempt in range(retries):
@@ -64,6 +105,16 @@ def check_website(url, timeout, retries=3):
                 time.sleep(2)
 
     return "DOWN"
+
+def send_alert(message, no_telegram):
+    if not no_telegram:
+        send_telegram_message(message)
+
+    send_email(
+        subject="Service Monitor Alert",
+        body=message
+    )
+
 
 @click.command()
 @click.option('--url', multiple=True, required=True, help='URL to monitor')
@@ -88,8 +139,7 @@ def main(url, interval, no_telegram, timeout):
                 else:
                     message=f"✅ {current_url} is BACK UP"
 
-                if not no_telegram:
-                    send_telegram_message(message)
+                send_alert(message, no_telegram)
 
                 logging.info(
                     f"STATUS CHANGE: {current_url} -> {current_status}"
