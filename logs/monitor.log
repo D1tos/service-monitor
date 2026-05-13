@@ -1,0 +1,17 @@
+2026-05-13 17:57:50,851 | INFO | Service monitor started
+2026-05-13 17:57:50,851 | INFO | Monitoring: https://google.com
+2026-05-13 17:57:50,852 | INFO | Check interval: 10s
+2026-05-13 17:57:50,852 | INFO | Request timeout: 5s
+2026-05-13 17:57:54,022 | INFO | Email alert sent
+2026-05-13 17:57:54,023 | INFO | STATUS CHANGE: https://google.com -> UP
+2026-05-13 17:58:05,196 | INFO | Service monitor started
+2026-05-13 17:58:05,196 | INFO | Monitoring: https://fake123fake.com
+2026-05-13 17:58:05,196 | INFO | Check interval: 10s
+2026-05-13 17:58:05,196 | INFO | Request timeout: 5s
+2026-05-13 17:58:05,263 | ERROR | Attempt 1/3 failed for https://fake123fake.com: HTTPSConnectionPool(host='fake123fake.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("HTTPSConnection(host='fake123fake.com', port=443): Failed to resolve 'fake123fake.com' ([Errno -2] Name or service not known)"))
+2026-05-13 17:58:05,263 | WARNING | Retrying https://fake123fake.com (1/3)
+2026-05-13 17:58:07,278 | ERROR | Attempt 2/3 failed for https://fake123fake.com: HTTPSConnectionPool(host='fake123fake.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("HTTPSConnection(host='fake123fake.com', port=443): Failed to resolve 'fake123fake.com' ([Errno -2] Name or service not known)"))
+2026-05-13 17:58:07,278 | WARNING | Retrying https://fake123fake.com (2/3)
+2026-05-13 17:58:09,294 | ERROR | Attempt 3/3 failed for https://fake123fake.com: HTTPSConnectionPool(host='fake123fake.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("HTTPSConnection(host='fake123fake.com', port=443): Failed to resolve 'fake123fake.com' ([Errno -2] Name or service not known)"))
+2026-05-13 17:58:10,726 | INFO | Email alert sent
+2026-05-13 17:58:10,727 | INFO | STATUS CHANGE: https://fake123fake.com -> DOWN

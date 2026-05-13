@@ -23,6 +23,9 @@ Even if Telegram API is unavailable, the monitor continues to work and logs stat
 - Logging to file and console
 - Modular helper-based architecture
 - Centralized alert handling
+- CLI argument validation
+- Typed CLI configuration
+- Startup monitoring logs
 
 ## Use Cases
 
@@ -60,14 +63,14 @@ and receive instant alerts in case of downtime.
 
 ## Project Structure
 
-service-monitor/
-├── logs/
-│   └── monitor.log
-├── .env
-├── .gitignore
-├── monitor.py
-├── requirements.txt
-└── README.md
+- service-monitor/
+- ├── logs/
+- │	└── monitor.log
+- ├── .env
+- ├── .gitignore
+- ├── monitor.py
+- ├── requirements.txt
+- └── README.md
 
 ## Core Functions
 
@@ -91,28 +94,36 @@ service-monitor/
 
 ### 1. Clone repository
 
-git clone https://github.com/D1tos/service-monitor.git
-cd service-monitor
+- git clone https://github.com/D1tos/service-monitor.git
+- cd service-monitor
 
 ### 2. Create virtual environment
 
-python3 -m venv venv
-source venv/bin/activate
+- python3 -m venv venv
+- source venv/bin/activate
 
 ### 3. Install dependencies
 
-pip install -r requirements.txt
+- pip install -r requirements.txt
 
 ### 4. Create .env file 
 
-TOKEN=your_telegram_token
-CHAT_ID=your_chat_id
+- TOKEN=your_telegram_token
+- CHAT_ID=your_chat_id
 
-EMAIL_SENDER=your_email@gmail.com
-EMAIL_PASSWORD=your_app_password
-EMAIL_RECEIVER=your_email@gmail.com
+- EMAIL_SENDER=your_email@gmail.com
+- EMAIL_PASSWORD=your_app_password
+- EMAIL_RECEIVER=your_email@gmail.com
+
+## CLI Validation
+
+The monitor validates
 
 ## Usage
+
+### Show help
+
+python monitor.py --help
 
 ### Monitor one website
 

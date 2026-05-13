@@ -130,17 +130,24 @@ def log_status_change(current_url, current_status):
         f"STATUS CHANGE: {current_url} -> {current_status}"
     )
 
-@click.command()
+@click.command(
+    help="CLI service monitoring tool with Telegram and Email alerts"
+)
 @click.option('--url', multiple=True, required=True, help='URL to monitor')
-@click.option('--interval', default=10, help='Check interval')
+@click.option('--interval', default=10, type=click.IntRange(1, 3600), show_default=True, help='Check interval in seconds')
 @click.option('--no-telegram', is_flag=True, help='Disable telegram alerts')
-@click.option('--timeout', default=5, help='Request timeout')
+@click.option('--timeout', default=5, type=click.IntRange(1, 60), show_default=True, help='Request timeout in seconds')
 
 def main(url, interval, no_telegram, timeout):
     last_status = {}
 
     logging.info("Service monitor started")
-    logging.info(f"Monitoring URLs: {url}")
+
+    for current_url in url:
+        logging.info(f"Monitoring: {current_url}")
+
+    logging.info(f"Check interval: {interval}s")
+    logging.info(f"Request timeout: {timeout}s")
 
     while True:
         for current_url in url:
