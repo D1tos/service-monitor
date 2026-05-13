@@ -21,6 +21,8 @@ Even if Telegram API is unavailable, the monitor continues to work and logs stat
 - Custom check interval
 - CLI support with Click
 - Logging to file and console
+- Modular helper-based architecture
+- Centralized alert handling
 
 ## Use Cases
 
@@ -47,12 +49,14 @@ and receive instant alerts in case of downtime.
 ## Architecture
 
 - CLI interface via Click
-- Multi-URL monitoring
 - HTTP monitoring with requests
-- Telegram and Email notification system
-- File and console logging
-- Fallback behavior when notification services are unavailable
 - Retry-based request handling
+- Telegram notification system
+- Email notification system
+- Centralized alert dispatcher
+- Helper-based monitoring architecture
+- Logging subsystem
+- Fallback behavior when notification services are unavailable
 
 ## Project Structure
 
@@ -64,6 +68,24 @@ service-monitor/
 ├── monitor.py
 ├── requirements.txt
 └── README.md
+
+## Core Functions
+
+| Function | Description |
+|---|---|
+| `check_website()` | Checks website availability with retry logic |
+| `send_telegram_message()` | Sends Telegram alerts |
+| `send_email()` | Sends email alerts |
+| `send_alert()` | Centralized alert dispatcher |
+| `build_status_message()` | Builds alert messages |
+| `log_status_change()` | Logs service status changes |
+
+## Reliability Features
+
+- Retry logic for failed requests
+- Graceful fallback when Telegram is unavailable
+- Email notifications continue working independently
+- Logging to both console and file
 
 ## Installation
 

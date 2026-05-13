@@ -102,6 +102,10 @@ def check_website(url, timeout, retries=3):
             )
 
             if attempt < retries - 1:
+                logging.warning(
+                    f"Retrying {url} ({attempt + 1}/{retries})"
+                )
+
                 time.sleep(2)
 
     return "DOWN"
@@ -115,6 +119,16 @@ def send_alert(message, no_telegram):
         body=message
     )
 
+def build_status_message(current_url, current_status):
+    if current_status == "DOWN":
+        return f"🚨 {current_url} is DOWN"
+
+    return f"✅ {current_url} is BACK UP"
+
+def log_status_change(current_url, current_status):
+    logging.info(
+        f"STATUS CHANGE: {current_url} -> {current_status}"
+    )
 
 @click.command()
 @click.option('--url', multiple=True, required=True, help='URL to monitor')
@@ -125,6 +139,9 @@ def send_alert(message, no_telegram):
 def main(url, interval, no_telegram, timeout):
     last_status = {}
 
+    logging.info("Service monitor started")
+    logging.info(f"Monitoring URLs: {url}")
+
     while True:
         for current_url in url:
             current_status = check_website(
@@ -134,16 +151,18 @@ def main(url, interval, no_telegram, timeout):
 
             if current_url not in last_status or last_status[current_url] != current_status:
 
-                if current_status == "DOWN":
-                    message=f"🚨 {current_url} is DOWN"
-                else:
-                    message=f"✅ {current_url} is BACK UP"
+                message = build_status_message(
+                    current_url,
+                    current_status
+                )
 
                 send_alert(message, no_telegram)
 
-                logging.info(
-                    f"STATUS CHANGE: {current_url} -> {current_status}"
+                log_status_change(
+                    current_url,
+                    current_status
                 )
+
                 last_status[current_url] = current_status
             else:
                 logging.info(
