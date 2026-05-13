@@ -1,14 +1,15 @@
-from dotenv import load_dotenv
-
 import os
-import requests
 import time
-import click
 import logging
 import smtplib
 
+import click
+import requests
+
+from dotenv import load_dotenv
 from email.message import EmailMessage
 
+VERSION = "1.0.0"
 
 load_dotenv()
 
@@ -141,7 +142,7 @@ def log_status_change(current_url, current_status):
 def main(url, interval, no_telegram, timeout):
     last_status = {}
 
-    logging.info("Service monitor started")
+    logging.info(f"Service Monitor v{VERSION} started")
 
     for current_url in url:
         logging.info(f"Monitoring: {current_url}")
@@ -149,34 +150,38 @@ def main(url, interval, no_telegram, timeout):
     logging.info(f"Check interval: {interval}s")
     logging.info(f"Request timeout: {timeout}s")
 
-    while True:
-        for current_url in url:
-            current_status = check_website(
-                current_url,
-                timeout
-            )
-
-            if current_url not in last_status or last_status[current_url] != current_status:
-
-                message = build_status_message(
+    try:
+        while True:
+            for current_url in url:
+                current_status = check_website(
                     current_url,
-                    current_status
+                    timeout
                 )
 
-                send_alert(message, no_telegram)
+                if current_url not in last_status or last_status[current_url] != current_status:
 
-                log_status_change(
-                    current_url,
-                    current_status
-                )
+                    message = build_status_message(
+                        current_url,
+                        current_status
+                    )
 
-                last_status[current_url] = current_status
-            else:
-                logging.info(
-                    f"STATUS: {current_url} -> {current_status}"
-                )
+                    send_alert(message, no_telegram)
 
-        time.sleep(interval)
+                    log_status_change(
+                        current_url,
+                        current_status
+                    )
+
+                    last_status[current_url] = current_status
+                else:
+                    logging.info(
+                        f"STATUS: {current_url} -> {current_status}"
+                    )
+
+            time.sleep(interval)
+
+    except KeyboardInterrupt:
+        logging.info("Service monitor stopped")
 
 if __name__ == "__main__":
     main()

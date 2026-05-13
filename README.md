@@ -1,6 +1,9 @@
 # Service Monitor with Telegram Alerts
 
 ## Description
+
+Current version: v1.0.0
+
 CLI-based service monitoring tool for tracking website and API availability with Telegram and Email alerts, retry logic, logging and fallback error handling.
 
 Designed to prevent alert spam by tracking service state.
@@ -16,16 +19,13 @@ Even if Telegram API is unavailable, the monitor continues to work and logs stat
 - Multi-channel alerts
 - Retry system
 - Error handling
+- Graceful shutdown (Ctrl+C handling)
+- Versioned releases
 - Works without Telegram API (fallback mode)
 - Multiple URL monitoring
 - Custom check interval
 - CLI support with Click
 - Logging to file and console
-- Modular helper-based architecture
-- Centralized alert handling
-- CLI argument validation
-- Typed CLI configuration
-- Startup monitoring logs
 
 ## Use Cases
 
@@ -121,6 +121,10 @@ The monitor validates
 
 ## Usage
 
+## Version
+
+Current release: v1.0.0
+
 ### Show help
 
 python monitor.py --help
@@ -172,6 +176,13 @@ The monitor supports:
 
 Alerts are only sent when service status changes.
 
+## Example Output
+
+2025-08-05 12:00:00 | INFO | Service Monitor v1.0.0 started
+2025-08-05 12:00:00 | INFO | Monitoring: https://google.com
+2025-08-05 12:00:00 | INFO | Check interval: 10s
+2025-08-05 12:00:10 | INFO | STATUS: https://google.com -> UP
+
 ## Alert Examples
 
 ### Service is down
@@ -181,6 +192,16 @@ Alerts are only sent when service status changes.
 ### Service recovered
 
 ✅ https://example.com is BACK UP
+
+## Shutdown
+
+Stop the monitor safely with:
+
+CTRL + C
+
+Example:
+
+2025-08-05 12:10:00 | INFO | Service monitor stopped
 
 ## Author
 
