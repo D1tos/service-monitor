@@ -1,31 +1,32 @@
-# Service Monitor with Telegram Alerts
+# Service Monitor CLI
 
 ## Description
 
-Current version: v1.0.0
+CLI-based service monitoring tool for tracking website and API availability with Telegram and Email alerts, retry logic, logging, and modular architecture.
 
-CLI-based service monitoring tool for tracking website and API availability with Telegram and Email alerts, retry logic, logging and fallback error handling.
+The application monitors multiple services, detects status changes, and sends notifications only when service state changes.
 
-Designed to prevent alert spam by tracking service state.
+Built as a modular Python application with separated monitoring, notification, and logging layers.
 
-Even if Telegram API is unavailable, the monitor continues to work and logs status changes to console.
+---
 
 ## Features
 
 - HTTP status monitoring
-- State-based alerts (no spam)
+- Multiple URL monitoring
 - Telegram notifications
 - Email notifications
-- Multi-channel alerts
-- Retry system
-- Error handling
-- Graceful shutdown (Ctrl+C handling)
-- Versioned releases
-- Works without Telegram API (fallback mode)
-- Multiple URL monitoring
-- Custom check interval
-- CLI support with Click
+- Multi-channel alert system
+- Retry logic for failed requests
 - Logging to file and console
+- CLI interface with Click
+- Configurable intervals and timeout
+- State-based alerts (anti-spam logic)
+- Graceful shutdown support
+- Environment-based configuration
+- Modular architecture
+
+---
 
 ## Use Cases
 
@@ -39,123 +40,124 @@ This tool can be used to monitor:
 
 and receive instant alerts in case of downtime.
 
+---
+
 ## Tech Stack
 
 - Python
 - requests
-- python-dotenv
 - click
+- python-dotenv
 - logging
 - smtplib
+- EmailMessage
 - Telegram Bot API
+
+---
 
 ## Architecture
 
-- CLI interface via Click
-- HTTP monitoring with requests
-- Retry-based request handling
-- Telegram notification system
-- Email notification system
-- Centralized alert dispatcher
-- Helper-based monitoring architecture
-- Logging subsystem
-- Fallback behavior when notification services are unavailable
+Project uses modular architecture with separated responsibilities:
+
+- monitoring/ → website checking logic
+- notifications/ → Telegram and Email alerts
+- utils/ → logger configuration
+- main.py → CLI entry point and orchestration
+
+---
 
 ## Project Structure
 
-- service-monitor/
-- ├── logs/
-- │	└── monitor.log
-- ├── .env
-- ├── .gitignore
-- ├── monitor.py
-- ├── requirements.txt
-- └── README.md
+service-monitor/
 
-## Core Functions
+├── logs/
+│   └── monitor.log
+│
+├── monitoring/
+│   └── checker.py
+│
+├── notifications/
+│   ├── alerts.py
+│   ├── telegram.py
+│   └── email_alert.py
+│
+├── utils/
+│   └── logger.py
+│
+├── .env
+├── .gitignore
+├── main.py
+├── requirements.txt
+└── README.md
 
-| Function | Description |
-|---|---|
-| `check_website()` | Checks website availability with retry logic |
-| `send_telegram_message()` | Sends Telegram alerts |
-| `send_email()` | Sends email alerts |
-| `send_alert()` | Centralized alert dispatcher |
-| `build_status_message()` | Builds alert messages |
-| `log_status_change()` | Logs service status changes |
-
-## Reliability Features
-
-- Retry logic for failed requests
-- Graceful fallback when Telegram is unavailable
-- Email notifications continue working independently
-- Logging to both console and file
+---
 
 ## Installation
 
 ### 1. Clone repository
 
-- git clone https://github.com/D1tos/service-monitor.git
-- cd service-monitor
+git clone https://github.com/D1tos/service-monitor.git
+
+cd service-monitor
 
 ### 2. Create virtual environment
 
-- python3 -m venv venv
-- source venv/bin/activate
+python3 -m venv venv
+
+source venv/bin/activate
 
 ### 3. Install dependencies
 
-- pip install -r requirements.txt
+pip install -r requirements.txt
 
-### 4. Create .env file 
 
-- TOKEN=your_telegram_token
-- CHAT_ID=your_chat_id
+### 4. Create .env file
 
-- EMAIL_SENDER=your_email@gmail.com
-- EMAIL_PASSWORD=your_app_password
-- EMAIL_RECEIVER=your_email@gmail.com
+TOKEN=your_telegram_token
 
-## CLI Validation
+CHAT_ID=your_chat_id
 
-The monitor validates
+EMAIL_SENDER=your_email@gmail.com
+
+EMAIL_PASSWORD=your_app_password
+
+EMAIL_RECEIVER=your_email@gmail.com
 
 ## Usage
 
-## Version
-
-Current release: v1.0.0
-
-### Show help
-
-python monitor.py --help
-
 ### Monitor one website
 
-python monitor.py --url https://google.com
+python main.py --url https://google.com
 
 ### Monitor multiple websites
 
-python monitor.py \
+python main.py \
   --url https://google.com \
   --url https://github.com
 
 ### Custom interval
 
-python monitor.py \
+python main.py \
   --url https://google.com \
   --interval 5
 
 ### Custom timeout
 
-python monitor.py \
+python main.py \
   --url https://google.com \
   --timeout 3
 
-### Disable Telegram alerts (optional for alerts)
+### Disable Telegram alerts
 
-python monitor.py \
+python main.py \
   --url https://google.com \
   --no-telegram
+
+## Retry Logic
+
+Failed requests are retried automatically before marking a service as DOWN.
+
+Default retry count: 3
 
 ## Logging
 
@@ -169,19 +171,12 @@ logs/monitor.log
 
 ## Notifications
 
-The monitor supports:
+Supported notification channels:
 
-- Telegram alerts
-- Email alerts
+- Telegram Bot API
+- Email (SMTP)
 
-Alerts are only sent when service status changes.
-
-## Example Output
-
-2025-08-05 12:00:00 | INFO | Service Monitor v1.0.0 started
-2025-08-05 12:00:00 | INFO | Monitoring: https://google.com
-2025-08-05 12:00:00 | INFO | Check interval: 10s
-2025-08-05 12:00:10 | INFO | STATUS: https://google.com -> UP
+Alerts are sent only when service status changes.
 
 ## Alert Examples
 
@@ -193,16 +188,20 @@ Alerts are only sent when service status changes.
 
 ✅ https://example.com is BACK UP
 
-## Shutdown
+## Graceful Shutdown
 
-Stop the monitor safely with:
+The application supports safe shutdown using:
 
 CTRL + C
 
-Example:
+When stopped manually, the monitor writes a shutdown message to logs.
 
-2025-08-05 12:10:00 | INFO | Service monitor stopped
+## Version
+
+Current version: v1.0.0
 
 ## Author
 
-GitHub: https://github.com/D1tos
+GitHub:
+
+https://github.com/D1tos
