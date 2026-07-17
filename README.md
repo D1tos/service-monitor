@@ -62,7 +62,7 @@ Project uses modular architecture with separated responsibilities:
 - monitoring/ → website checking logic
 - notifications/ → Telegram and Email alerts
 - utils/ → logger configuration
-- main.py → CLI entry point and orchestration
+- monitor.py → CLI entry point and orchestration
 
 ---
 
@@ -86,7 +86,7 @@ service-monitor/
 │
 ├── .env
 ├── .gitignore
-├── main.py
+├── monitor.py
 ├── requirements.txt
 └── README.md
 
@@ -102,9 +102,9 @@ cd service-monitor
 
 ### 2. Create virtual environment
 
-python3 -m venv venv
+python3 -m venv .venv
 
-source venv/bin/activate
+source .venv/bin/activate
 
 ### 3. Install dependencies
 
@@ -127,29 +127,29 @@ EMAIL_RECEIVER=your_email@gmail.com
 
 ### Monitor one website
 
-python main.py --url https://google.com
+python monitor.py --url https://google.com
 
 ### Monitor multiple websites
 
-python main.py \
+python monitor.py \
   --url https://google.com \
   --url https://github.com
 
 ### Custom interval
 
-python main.py \
+python monitor.py \
   --url https://google.com \
   --interval 5
 
 ### Custom timeout
 
-python main.py \
+python monitor.py \
   --url https://google.com \
   --timeout 3
 
 ### Disable Telegram alerts
 
-python main.py \
+python monitor.py \
   --url https://google.com \
   --no-telegram
 
