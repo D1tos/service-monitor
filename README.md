@@ -96,31 +96,40 @@ service-monitor/
 
 ### 1. Clone repository
 
+```
 git clone https://github.com/D1tos/service-monitor.git
 
 cd service-monitor
+```
 
 ### 2. Create virtual environment
 
+```
 python3 -m venv .venv
 
 source .venv/bin/activate
+```
 
 ### 3. Install dependencies
 
+```
 pip install -r requirements.txt
-
+```
 
 ### 4. Configure environment variables
 
 Copy the example environment file:
 
 ##### Bash
+```
 cp .env.example .env
+```
 
 ##### PowerShell
 
+```
 Copy-Item .env.example .env
+```
 
 #### Then open .env and provide your credentials:
 
