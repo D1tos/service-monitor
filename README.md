@@ -111,8 +111,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 
-### 4. Create .env file
+### 4. Copy .env.example file
+#### Bash
+cp .env.example .env
 
+#### PowerShell
+Copy-Item .env.example .env
+
+#### fill in a file
 TOKEN=your_telegram_token
 
 CHAT_ID=your_chat_id
