@@ -111,14 +111,19 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 
-### 4. Copy .env.example file
-#### Bash
+### 4. Configure environment variables
+
+Copy the example environment file:
+
+##### Bash
 cp .env.example .env
 
-#### PowerShell
+##### PowerShell
+
 Copy-Item .env.example .env
 
-#### fill in a file
+#### Then open .env and provide your credentials:
+
 TOKEN=your_telegram_token
 
 CHAT_ID=your_chat_id
@@ -211,3 +216,8 @@ Current version: v1.0.0
 GitHub:
 
 https://github.com/D1tos
+
+## License
+
+
+This project is licensed under the [MIT License](LICENSE).
